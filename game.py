@@ -1,4 +1,6 @@
 #viele Variablen sind Platzhalter und werden später verwendet
+import time
+
 timeofday = None
 weather = "unheimlich"
 smell = None
@@ -21,14 +23,16 @@ villagename = input("Wie soll dein Dorf heißen? ") #den input hätte ich normal
 print("Als du dich dem Dorf näherst, fällt dir auf, dass es menschenleer ist. Du Rufst einmal ganz laut.")
 print("HAAALLLLOOOO")
 print()
+time.sleep(1)
 print()
+time.sleep(1)
 print()
 noise = "Stille"
-print(f"Aber niemand antwortet. Es herrscht {noise}.") 
+print(f"Niemand antwortet. Es herrscht {noise}.") 
 print("In drei Häusern brennt noch Licht. Du beschließt zu einem dieser Häuser zu gehen.")
 print("Haus 1 ist das größte und liegt im Zentrum des Dorfes. Haus zwei wirkt verwahrlost und wuchert von allen Seiten mit unterschiedlichsten Pflanzen und Kräutern zu. Aus Haus drei hörst du klirrende Geräusche und es steigt Rauch aus dem Schornstein")
 
-house_choice = input(f"Du gehst zu Haus Nr und klopfst")
+house_choice = input(f"Du gehst zu Haus Nr und klopfst. (Wähle eine Hausnummer): ")
 print(type(house_choice))
 
 print ("Von drinnen kommt eine Antwort: Ja? Wer da?")
