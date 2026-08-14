@@ -6,14 +6,16 @@ weather = "unheimlich"
 smell = None
 sounds = None
 villagename = None
-profession = "Schmied"
+profession = "Schmied" # dient als Platzhalter und wird später eine liste/dict????? so weit bin ich noch nicht
 house_choice = None
 player_name = None
 noise = "Donner"
+saw_something = None
 
 
 print("Willkommen im Spiel!")
-print("Du öffnest langsam deine Augen und schaust aud den Himmel. ")
+player_name = input("Wie ist dein Name?")
+print(f"{player_name} öffnet langsam deine Augen und schaut gegen den Himmel. ")
 smell = "Sommerregen"
 print(f"Das Wetter ist {weather}. Dunkle Wolken ziehen schnell vorbei. Von den Wolken gehen immer wieder Blitze und {noise} aus. Es riecht nach frischem {smell}.")
 print("Verwirrt fragst du dich, wo du bist und wie du hier gelandet bist.")
@@ -30,11 +32,28 @@ print()
 noise = "Stille"
 print(f"Niemand antwortet. Es herrscht {noise}.") 
 print("In drei Häusern im Dorf brennt noch Licht. Du beschließt zu einem der Häuser zu gehen.")
-print(f"Haus 1 ist das größte und liegt im Zentrum des Dorfes, es ist das Haus des {profession} von {villagename}. Das zweite ist das verwahrloste Haus der {profession} und wuchert von allen Seiten mit unterschiedlichsten Pflanzen und seltsamen Kräutern zu.  Das dritte Haus ist das des {profession}. Du hörst das Klirren des Amboss im inneren.")
+print(f"Haus 1 ist das größte und liegt im Zentrum des Dorfes {villagename}. Das zweite ist ein verwahrlostes Haus und wuchert von allen Seiten mit unterschiedlichsten Pflanzen und seltsamen Kräutern zu.  Aus dem dritten Haus hörst das Klirren des von Metall im inneren.")
 
-house_choice = input("Du gehst zu Haus Nr und klopfst. (Wähle eine Hausnummer): ")
+house_choice = input(f"Aus einem der Häuser kommt jemand. (Wähle eine Hausnummer): ")
 
-print ("Von drinnen kommt eine Antwort: Ja? Wer da?")
+if house_choice == 1:
+    print(f"Eine Gestalt verlässt das große Haus und kommt auf dich zu. Du erkennst, dass es der {profession} ist.")
+elif house_choice == 2:
+    print(f"Eine Gestalt verlässt das zugewucherte Haus und kommt auf dich zu. Du erkennst, dass es der {profession} ist.")
+else:
+    print(f"Eine Gestalt verlässt das große Haus und kommt auf dich zu. Du erkennst, dass es der {profession} ist.")
 
-player_name = input("Ich bin es, ")
-print(f"Ach {player_name}, du bist es. Komm schnell rein.")
+print(f"Der/die {profession} bleibt vor dir stehen und schaut dich misstrauisch an.")
+print(f"Hallo {player_name}, du bist also auch noch da? Hast du mitbekommen, was mit den anderen Dorfbewohnern passiert ist? ")
+
+print("Antwort 1: Ja ich habe etwas gesehen [Lügen]")
+print("Antwort 2: Nein, ich habe nichts gesehen.")
+
+saw_something = input("Wähle eine Antwort: ")
+antwort = saw_something.lower().strip()
+
+if antwort == "ja":
+    print("Was hast du gesehen?") # später steigt die variable "trust" der jeweiligen Person. Listen/dics noch nicht gelernt
+    trust = trust + 1
+elif antwort == "nein":
+    print("text ausdenken")
