@@ -19,10 +19,13 @@ armor = 5
 schrott = 0
 ammo = 40
 kern = 100
+ammo_max = 40
+kern_max = 100
 
-kern_balken_laenge = 10
-kern_balken = round(kern / 10) 
-kern_rest = kern_balken_laenge - kern_balken
+inventar = []
+
+balken_laenge = 10
+
 
 wellen_bis_evakuierung = 20
 rekruten_anzahl = 0
@@ -137,13 +140,6 @@ while repeat:
 ziel_in_sicht = True
 print()
 
-if ammo > 0 and nachladen_noetig == False and ziel_in_sicht:
-    print("FEUER FREI! ")
-    ammo -= 1
-    print(f"Noch {ammo} Munition übrig.")
-else:
-    print("Keine Munition mehr!")
-
 print(ascii_kopf)
 
 
@@ -151,12 +147,12 @@ for welle in range(1, wellen_bis_evakuierung + 1):
     print(f"--- Welle {welle} von {wellen_bis_evakuierung} ---")
     
     runde = 1
-    gegner_anzahl += welle
+    gegner_anzahl = welle              # Auftrag 14 maximal primitiv erledigt
 
-    while gegner_anzahl > 0 and health > 0:
+    while gegner_anzahl > 0 and kern > 0:
         print(f"Welle {welle} | Runde {runde}")
         eingabe = input("Wähle eine Aktion: beenden/test/schaden/feuer/status/nachladen> ").lower().strip()   #test,schaden sind entwicklerwerkzeuge
-        
+
         if eingabe == "test":
             gegner_anzahl -= 1
             print(f"Noch {gegner_anzahl} Gegner übrig.")
@@ -168,16 +164,29 @@ for welle in range(1, wellen_bis_evakuierung + 1):
             ammo -=1
             gegner_anzahl -= 1
             runde += 1
-        elif eingabe == "feuer" and ammo <= 0:
+            kern -= gegner_anzahl * 2
+            if ammo == 0:
+                print("Munition ist jetzt leer!")
+                nachladen_noetig = True
+        elif eingabe == "feuer" and nachladen_noetig:
             print("Keine Munition mehr")
         elif eingabe == "nachladen":
             print("Lade nach!")
             runde += 1
             ammo = 40
+            kern -= gegner_anzahl * 2
+            nachladen_noetig = False
+            
         elif eingabe == "beenden":
             print(f"Welle {welle} beendet")
             break
         elif eingabe == "status":
+            
+            kern_balken = round((kern / kern_max) * balken_laenge)      #Meine Balkenanzeigen rechnen alle Werte auf die Balkenlänge 10 um und übschreiten keine Grenzen.
+            ammo_balken = round((ammo / ammo_max) * balken_laenge)
+            kern_rest = balken_laenge - kern_balken
+            ammo_rest = balken_laenge - ammo_balken
+            
             print(f"Kern: {kern}")
             print(f"Health: {health}")
             print(f"Armor: {armor}")
@@ -186,20 +195,11 @@ for welle in range(1, wellen_bis_evakuierung + 1):
             print(f"Schaden: {damage}")
             print(f"Rekruten: {rekruten_anzahl}")
             print(f"Gegner: {gegner_anzahl}")
+            print(f"Nachladen nötig: {nachladen_noetig}")
             print("Kern      [" + ("#" * kern_balken) + ("·" * kern_rest) + "]")
-            print(kern_balken)
-            print(kern_rest)
-            print("Munition  [")
+            print("Munition  [" + ("#" * ammo_balken) + ("·" * ammo_rest) + "]")
+        
+    if kern <= 0:
+            break
         
 
-        kern -= gegner_anzahl * 2
-            
- 
-
-#im guide nachladen_nötig bool setzen, anstatt ammo abzufragen? 
-# Z136 - 143 entfernen ???? aufräumen?
-# test und schaden in while entfernen????? aufräumen?
-# runde im tutorial in der for schleife???? was passiert bei neuer Welle? 
-#status durchläuft einen cycle. zwar keine runde beendet, aber schaden durch gegner genommen
-#kern als bedingung für die while schleife fehlt?
-#ich habe statusanzeige stärker erweitert, als aufgabe? evtl übernehmen?
