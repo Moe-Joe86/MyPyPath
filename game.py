@@ -148,57 +148,92 @@ for welle in range(1, wellen_bis_evakuierung + 1):
     
     runde = 1
     gegner_anzahl = welle              # Auftrag 14 maximal primitiv erledigt
+    inventar = []
+    loot = ["schrott", "panzerplatte", "datenkern", 
+    "munitionskasten"]
 
     while gegner_anzahl > 0 and kern > 0:
         print(f"Welle {welle} | Runde {runde}")
-        eingabe = input("Wähle eine Aktion: beenden/test/schaden/feuer/status/nachladen> ").lower().strip()   #test,schaden sind entwicklerwerkzeuge
+        eingabe = input("Wähle eine Aktion: beenden/feuer/status/nachladen/inventar> ").lower().split()   #test,schaden sind entwicklerwerkzeuge
 
-        if eingabe == "test":
-            gegner_anzahl -= 1
-            print(f"Noch {gegner_anzahl} Gegner übrig.")
-        elif eingabe == "schaden":
-            kern -= 32
-            print(f"{kern} Kern")
-        elif eingabe == "feuer" and ammo > 0:
-            print("Feuer frei!")
-            ammo -=1
-            gegner_anzahl -= 1
-            runde += 1
-            kern -= gegner_anzahl * 2
-            if ammo == 0:
-                print("Munition ist jetzt leer!")
-                nachladen_noetig = True
-        elif eingabe == "feuer" and nachladen_noetig:
-            print("Keine Munition mehr")
-        elif eingabe == "nachladen":
-            print("Lade nach!")
-            runde += 1
-            ammo = 40
-            kern -= gegner_anzahl * 2
-            nachladen_noetig = False
+        if len(eingabe) == 0:
+            print("Gib etwas ein")
+        else:
+            wort1 = eingabe[0]
+            wort2 = ""
+            if len(eingabe) > 1:
+                wort2 = eingabe[1]
+            if wort1 == "feuer" or (wort1 == "feuer" and wort2 == "frei"):
+                if nachladen_noetig:
+                    print("Keine Munition mehr.")
+                else:
+                    print("Feuer frei!")
+                    ammo -=1
+                    gegner_anzahl -= 1
+                    runde += 1
+                    kern -= gegner_anzahl * 2
+                    if ammo == 0:
+                        print("Munition ist jetzt leer!")
+                        nachladen_noetig = True
+
+            elif wort1 == "nachladen" or (wort1 == "lade" and wort2 == "nach") :
+                print("Lade nach!")
+                runde += 1
+                ammo = 40
+                kern -= gegner_anzahl * 2
+                nachladen_noetig = False
+                
+            elif wort1 == "beenden" or (wort1 == "welle" and wort2 == "beenden"):
+                print(f"Welle {welle} beendet")
+                break
+
+            elif wort1 == "inventar" or (wort1 == "inventar" and wort2 == "anzeigen"):
+                print(inventar)
+
+            elif wort1 == "nimm":
+                if len(eingabe) == 1:
+                    print("Nichts ausgewählt.")
+                else:
+                    if wort2 in loot and len(inventar) < 10:
+                        inventar.append(wort2)
+                        loot.remove(wort2)
+                        print(f"{wort2} aufgenommen.")
+                    else:
+                        print("Das liegt hier nicht.")
             
-        elif eingabe == "beenden":
-            print(f"Welle {welle} beendet")
-            break
-        elif eingabe == "status":
+            elif wort1 == "lege":
+                if len(eingabe) == 1:
+                    print("Nichts ausgewählt.")
+                else:
+                    if wort2 in loot:
+                        inventar.remove(wort2)
+                        loot.append(wort2)
+                        print(f"{wort2} abgelegt.")
+                    else:
+                        print("Das besitze ich nicht.")
             
-            kern_balken = round((kern / kern_max) * balken_laenge)      #Meine Balkenanzeigen rechnen alle Werte auf die Balkenlänge 10 um und übschreiten keine Grenzen.
-            ammo_balken = round((ammo / ammo_max) * balken_laenge)
-            kern_rest = balken_laenge - kern_balken
-            ammo_rest = balken_laenge - ammo_balken
+            elif wort1 == "status" or (wort1 == "status" and  wort2 == "anzeigen"):
+                
+                kern_balken = round((kern / kern_max) * balken_laenge)      #Meine Balkenanzeigen rechnen alle Werte auf die Balkenlänge 10 um und übschreiten keine Grenzen.
+                ammo_balken = round((ammo / ammo_max) * balken_laenge)
+                kern_rest = balken_laenge - kern_balken
+                ammo_rest = balken_laenge - ammo_balken
+                
+                print(f"Kern: {kern}")
+                print(f"Health: {health}")
+                print(f"Armor: {armor}")
+                print(f"Schrott: {schrott}")
+                print(f"Ammo: {ammo}")
+                print(f"Schaden: {damage}")
+                print(f"Rekruten: {rekruten_anzahl}")
+                print(f"Gegner: {gegner_anzahl}")
+                print(f"Nachladen nötig: {nachladen_noetig}")
+                print(f"Loot:{loot}")
+                print(f"Inventar: {inventar}")
+                print("Kern      [" + ("#" * kern_balken) + ("·" * kern_rest) + "]")
+                print("Munition  [" + ("#" * ammo_balken) + ("·" * ammo_rest) + "]")
+
             
-            print(f"Kern: {kern}")
-            print(f"Health: {health}")
-            print(f"Armor: {armor}")
-            print(f"Schrott: {schrott}")
-            print(f"Ammo: {ammo}")
-            print(f"Schaden: {damage}")
-            print(f"Rekruten: {rekruten_anzahl}")
-            print(f"Gegner: {gegner_anzahl}")
-            print(f"Nachladen nötig: {nachladen_noetig}")
-            print("Kern      [" + ("#" * kern_balken) + ("·" * kern_rest) + "]")
-            print("Munition  [" + ("#" * ammo_balken) + ("·" * ammo_rest) + "]")
-        
     if kern <= 0:
             break
         
