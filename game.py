@@ -1,11 +1,12 @@
 import time
+import random
 
 player_class = None
 player_name = None
 
 #equipment
 medkit = None
-werkzeug = None
+tool = None
 heavy_machinegun = None
 machinegun = None
 
@@ -16,28 +17,29 @@ damage = 10
 armor = 5
 
 #resouces
-schrott = 0
+scrap = 0
 ammo = 40
-kern = 100
+core = 100
 ammo_max = 40
-kern_max = 100
+core_max = 100
+exp = 0
 
-inventar = []
+inventory = []
 
 balken_laenge = 10
 
 
-wellen_bis_evakuierung = 20
-rekruten_anzahl = 0
-gegner_anzahl = 1
-nachladen_noetig = False
-ziel_in_sicht = None
-funkspruch_abgesetzt = None
-antwort = None
+wave_to_evacuation = 20
+recruts = 0
+enemy = []
+reload_necessary = False
+enemy_in_sight = None
+radiomessage_transmitted = None
+answere = None
 
 
-letzte_meldung = "Kzzz... Brauchen dringend Verstärkung! kschhh... Wir werden überrannt! Kzzz... Beeilt euch! ...chhh"
-beleuchtung = "Notbeleuchtung" # kürzere Sichtweite?
+last_message = "Kzzz... Brauchen dringend Verstärkung! kschhh... Wir werden überrannt! Kzzz... Beeilt euch! ...chhh"
+lights = "Notbeleuchtung" # kürzere Sichtweite?
 
 
 ascii_kopf = """
@@ -47,10 +49,10 @@ ascii_kopf = """
 /                                                                               \ 
 """
 
-print(f"Health: {health} | Ammo: {ammo} | Schrott: {schrott} | Rekruten: {rekruten_anzahl} | Wellen bis zur Evakuierung: {wellen_bis_evakuierung} ")
+print(f"Health: {health} | Ammo: {ammo} | Schrott: {scrap} | Rekruten: {recruts} | Wellen bis zur Evakuierung: {wave_to_evacuation} ")
 
 """
-print(f"Aufgezeichnete Durchsage: {letzte_meldung}")
+print(f"Aufgezeichnete Durchsage: {last_message}")
 print()
 time.sleep(2)
 print("ALLE REKRUTEN STILLGESTANDEN!")
@@ -63,7 +65,7 @@ print()
 
 print("Rekrut, welches spezialisierte Training haben Sie durchlaufen?")
 print()
-print("-Soldat")
+print("-Soldier")
 print("-Medic")
 print("-Heavy")
 print("-Engineer")
@@ -71,30 +73,33 @@ print()
 player_class = input("Wähle eine Klasse und gebe den Namen ein:  ")
 player_class = player_class.lower().strip()
 
-if player_class != "soldat" and player_class != "medic" and player_class != "heavy" and player_class != "engineer": # hiermit möchte ich Auftrag 3 ohne else erfüllen. Diese Bedingung kann ich auch mit == und einem else erfüllen, ist aber kostspieliger. bewusste entscheidung gegen die Aufgabe!
-    player_class = input("Falsche Eingabe. Gib Soldat, Medic, Heavy oder Engineer ein: ")
+if player_class != "soldier" and player_class != "medic" and player_class != "heavy" and player_class != "engineer": # hiermit möchte ich Auftrag 3 ohne else erfüllen. Diese Bedingung kann ich auch mit == und einem else erfüllen, ist aber kostspieliger. bewusste entscheidung gegen die Aufgabe!
+    player_class = input("Falsche Eingabe. Gib Soldier, Medic, Heavy oder Engineer ein: ")
     player_class = player_class.lower().strip()
 
-if player_class == "soldat":
+if player_class == "soldier":
     health = 100
     damage = 10
     armor = 5
+
     machinegun = True
 elif player_class == "medic":
-    health *=  0.8
-    damage *= 0.6
-    armor *= 0.6
+    health = int(health * 0.8)
+    damage = int(damage * 0.6)
+    armor = int(armor * 0.6)
     medkit = True
 elif player_class == "heavy":
-    health *= 1.4
-    damage *= 1.4
-    armor *= 2
+    health = int(health * 1.4)
+    damage = int(damage * 1.4)
+    armor = int(armor * 2)
     heavy_machinegun = True
 elif player_class == "engineer":
-    health *= 0.9
-    damage *= 0.7
-    armor *= 0.8
-    werkzeug = True
+    health = int(health * 0.9)
+    damage = int(damage * 0.7)
+    armor = int(armor * 0.8)
+    tool = True
+
+health_max = health
 
 print()
 print(f"Klasse: {player_class}")
@@ -107,134 +112,172 @@ time.sleep(1)
 print()
 
 print(f"Wir haben nur noch {ammo} Munition übrig.")
-print(f"Die Kernintegrität unserer Einrichtung beträgt zwar noch {health}%,")
-print(f"aber uns verbleiben nur noch {schrott} Schrott für Reparaturen.")
+print(f"Die Kernintegrität unserer Einrichtung beträgt zwar noch {core}%,")
+print(f"aber uns verbleiben nur noch {scrap} Schrott für Reparaturen.")
 
 print()
 time.sleep(1)
 
-print(f"Aufgezeichnete Durchsage: {letzte_meldung}")
+print(f"Aufgezeichnete Durchsage: {last_message}")
 
 print()
 time.sleep(1)
 print()
+
 """
 print("Feinde nähern sich. Du siehst etwas ungewöhnliches. Setzt du einen Funkspruch ab?")
-antwort = input("Ja oder Nein > ")
-antwort = antwort.lower().strip()
+answere = input("Ja oder Nein > ")
+answere = answere.lower().strip()
 
 repeat = True
 while repeat:
-    if antwort == "ja":
-        funkspruch_abgesetzt = True
+    if answere == "ja":
+        radiomessage_transmitted = True
         print("Ein Funkspruch wurde abgesetzt.")
         repeat = False
-    elif antwort == "nein":
-        funkspruch_abgesetzt = False
+    elif answere == "nein":
+        radiomessage_transmitted = False
         print("Du hast keinen Funkspruch abgesetzt.")
         repeat = False
     else:
-        antwort = input("Falsche Eingabe. Schreibe Ja oder Nein: ")
+        answere = input("Falsche Eingabe. Schreibe Ja oder Nein: ")
 
 """
-ziel_in_sicht = True
+
+enemy_in_sight = True
 print()
 
 print(ascii_kopf)
 
+inventory = []
+loot_table = ["schrott", "panzerplatte", "datenkern", "munitionskasten"]
+loot = []
 
-for welle in range(1, wellen_bis_evakuierung + 1):
-    print(f"--- Welle {welle} von {wellen_bis_evakuierung} ---")
+
+for wave in range(1, wave_to_evacuation + 1):
+    print(f"--- Welle {wave} von {wave_to_evacuation} ---")
     
-    runde = 1
-    gegner_anzahl = welle              # Auftrag 14 maximal primitiv erledigt
-    inventar = []
-    loot = ["schrott", "panzerplatte", "datenkern", 
-    "munitionskasten"]
+    round_nr = 1
+    enemy = []
 
-    while gegner_anzahl > 0 and kern > 0:
-        print(f"Welle {welle} | Runde {runde}")
-        eingabe = input("Wähle eine Aktion: beenden/feuer/status/nachladen/inventar> ").lower().split()   #test,schaden sind entwicklerwerkzeuge
 
-        if len(eingabe) == 0:
+    for spawn in range(wave):
+        enemy.append(5)
+        
+    print(f"{len(enemy)} Gegner befinden sich im Anmarsch.")
+    
+
+    while len(enemy) > 0 and (core > 0 and health > 0):
+        print(f"Welle {wave} | Runde {round_nr}")
+
+        pos_on_map = ["."] * 5
+        closest_enemy = min(enemy)
+        
+        for enemy_pos in range(len(enemy)):
+            if enemy[enemy_pos] > 0:
+                pos_on_map[-enemy[enemy_pos]] = "k"
+        print("Das Loch @ " + "".join(pos_on_map) + " /-\ Vorposten")
+        
+
+        action = input("Wähle eine Aktion: beenden/feuer/status/nachladen/inventar> ").lower().split()   #test,schaden sind entwicklerwerkzeuge
+        print()
+
+
+        if len(action) == 0:
             print("Gib etwas ein")
         else:
-            wort1 = eingabe[0]
-            wort2 = ""
-            if len(eingabe) > 1:
-                wort2 = eingabe[1]
-            if wort1 == "feuer" or (wort1 == "feuer" and wort2 == "frei"):
-                if nachladen_noetig:
+            word1 = action[0]
+            word2 = ""
+            if len(action) > 1:
+                word2 = action[1]
+            if word1 == "feuer" or (word1 == "feuer" and word2 == "frei"):
+                if reload_necessary:
                     print("Keine Munition mehr.")
                 else:
                     print("Feuer frei!")
-                    ammo -=1
-                    gegner_anzahl -= 1
-                    runde += 1
-                    kern -= gegner_anzahl * 2
+                    ammo -= 1
+                    enemy.remove(closest_enemy)
+                    exp += 10
+                    round_nr += 1
+                    core -= len(enemy) * 2 
+                    health -= len(enemy) * 1
+                    loot.append(random.choice(loot_table))
                     if ammo == 0:
                         print("Munition ist jetzt leer!")
-                        nachladen_noetig = True
+                        reload_necessary = True                        
+                    for move in range(len(enemy)):
+                        enemy[move] -= 1
 
-            elif wort1 == "nachladen" or (wort1 == "lade" and wort2 == "nach") :
+            elif word1 == "nachladen" or (word1 == "lade" and word2 == "nach") :
                 print("Lade nach!")
-                runde += 1
+                round_nr += 1
                 ammo = 40
-                kern -= gegner_anzahl * 2
-                nachladen_noetig = False
+                core -= len(enemy) * 2
+                reload_necessary = False                  
+                for move in range(len(enemy)):
+                    enemy[move] -= 1
+
                 
-            elif wort1 == "beenden" or (wort1 == "welle" and wort2 == "beenden"):
-                print(f"Welle {welle} beendet")
+            elif word1 == "beenden" or (word1 == "welle" and word2 == "beenden"):
+                print(f"Welle {wave} beendet")
                 break
 
-            elif wort1 == "inventar" or (wort1 == "inventar" and wort2 == "anzeigen"):
-                print(inventar)
+            elif word1 == "inventar" or (word1 == "inventar" and word2 == "anzeigen"):
+                print(inventory)
 
-            elif wort1 == "nimm":
-                if len(eingabe) == 1:
+            elif word1 == "nimm":
+                if len(action) == 1:
                     print("Nichts ausgewählt.")
                 else:
-                    if wort2 in loot and len(inventar) < 10:
-                        inventar.append(wort2)
-                        loot.remove(wort2)
-                        print(f"{wort2} aufgenommen.")
+                    if word2 in loot and len(inventory) < 10:
+                        inventory.append(word2)
+                        loot.remove(word2)
+                        print(f"{word2} aufgenommen.")
                     else:
                         print("Das liegt hier nicht.")
             
-            elif wort1 == "lege":
-                if len(eingabe) == 1:
+            elif word1 == "lege":
+                if len(action) == 1:
                     print("Nichts ausgewählt.")
                 else:
-                    if wort2 in loot:
-                        inventar.remove(wort2)
-                        loot.append(wort2)
-                        print(f"{wort2} abgelegt.")
+                    if word2 in inventory:
+                        inventory.remove(word2)
+                        loot.append(word2)
+                        print(f"{word2} abgelegt.")
                     else:
                         print("Das besitze ich nicht.")
             
-            elif wort1 == "status" or (wort1 == "status" and  wort2 == "anzeigen"):
+            elif word1 == "status" or (word1 == "status" and  word2 == "anzeigen"):
                 
-                kern_balken = round((kern / kern_max) * balken_laenge)      #Meine Balkenanzeigen rechnen alle Werte auf die Balkenlänge 10 um und übschreiten keine Grenzen.
+                kern_balken = round((core / core_max) * balken_laenge)      #Meine Balkenanzeigen rechnen alle Werte auf die Balkenlänge 10 um und übschreiten keine Grenzen.
                 ammo_balken = round((ammo / ammo_max) * balken_laenge)
+                health_balken = round((health / health_max) * balken_laenge)
                 kern_rest = balken_laenge - kern_balken
                 ammo_rest = balken_laenge - ammo_balken
+                health_rest = balken_laenge - health_balken
                 
-                print(f"Kern: {kern}")
+                print(f"Kern: {core}")
                 print(f"Health: {health}")
                 print(f"Armor: {armor}")
-                print(f"Schrott: {schrott}")
+                print(f"Schrott: {scrap}")
                 print(f"Ammo: {ammo}")
                 print(f"Schaden: {damage}")
-                print(f"Rekruten: {rekruten_anzahl}")
-                print(f"Gegner: {gegner_anzahl}")
-                print(f"Nachladen nötig: {nachladen_noetig}")
+                print(f"Rekruten: {recruts}")
+                print(f"Gegner: {enemy}")
+                print(f"Erfahrung: {exp}")
+                print(f"Nachladen nötig: {reload_necessary}")
                 print(f"Loot:{loot}")
-                print(f"Inventar: {inventar}")
+                print(f"Inventar: {inventory}")
                 print("Kern      [" + ("#" * kern_balken) + ("·" * kern_rest) + "]")
+                print("Health    [" + ("#" * health_balken) + ("·" * health_rest) + "]")
                 print("Munition  [" + ("#" * ammo_balken) + ("·" * ammo_rest) + "]")
 
             
-    if kern <= 0:
-            break
+    if core <= 0:        
+        break
+        print("Deine Basis wurde zerstört.")
+    elif health <= 0:
+        break
+        print("Du bist gestorben.")
         
 
