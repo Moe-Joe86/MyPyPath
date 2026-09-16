@@ -35,13 +35,13 @@ balken_laenge = 10
 
 
 wave_to_evacuation = 20
-enemy = []
 reload_necessary = False
 enemy_in_sight = True
 radiomessage_transmitted = None
 answere = None
-bekannte_gegnertypen = set()
-freigeschaltet = set()
+bekannte_gegnertypen = set()    #Jeder Eintrag in bekannte_gegnertypen steht auch als Schlüssel in GEGNERTYPEN.
+freigeschaltet = set()   #Jeder Eintrag in freigeschaltet steht auch als Schlüssel in UPGRADES.
+
 
 
 
@@ -49,7 +49,7 @@ freigeschaltet = set()
 #DAS DEPOT / VORRAT
 
 waren = {"medkit": 25, "munitionskiste": 15, "panzerplatte": 90, "reparaturkit": 60}   #Preisangabe, keine Menge!
-stapelbar = {"medkit": False, "munitionskiste": True, "panzerplatte": False, "reparaturkit": False}   #Wird nur für Waren und Depot benötigt. 
+stapelbar = {"munitionskiste"}   #Wird nur für Waren und Depot benötigt. 
 
 UPGRADES = {"zielhilfe": 60, "grossmagazin": 80, "schnellfeuer": 120} #Preisangabe, keine Menge!
 
@@ -60,7 +60,7 @@ vorrat = {"vaporium": 100, "munition": 40, "chitinpanzer": 2, "organ": 1, "saeur
 GEGNERTYPEN = {"kriecher":
                 {
                 "kurz": "Der Kriecher tritt fast ausschließlich in riesigen Schwärmen auf, um den Feind blitzschnell zu überrennen.", 
-                "lang": "Der Kriecher wurde vom der Brut zu einer perfektionierten Tötungsmaschine mutiert. Von der Größe eines großen Hundes, greift er mit messerscharfen Sensenklauen und kraftvollen Beißwerkzeugen an. Ihre wahre Stärke liegt in ihrer Masse und ihrer enormen Fortbewegungsgeschwindigkeit. Einzeln sind sie leicht zu eliminieren, doch im Kollektiv fluten sie die Schlachtfelder, umgehen Verteidigungslinien und überrennen selbst stark befestigte Stellungen in Sekundenschnelle durch ihre schiere Überzahl.",
+                "lang": "DER KRIECHER: \nDer Kriecher wurde vom der Brut zu einer perfektionierten Tötungsmaschine mutiert. Von der Größe eines großen Hundes, \ngreift er mit messerscharfen Sensenklauen und kraftvollen Beißwerkzeugen an. Ihre wahre Stärke liegt in ihrer Masse und \nihrer enormen Fortbewegungsgeschwindigkeit. Einzeln sind sie leicht zu eliminieren, doch im Kollektiv fluten sie die Schlachtfelder, \numgehen Verteidigungslinien und überrennen selbst stark befestigte Stellungen in Sekundenschnelle durch ihre schiere Überzahl.",
                 "zeichen": "K"
                 },
             "speier":
@@ -80,7 +80,7 @@ GEGNERTYPEN = {"kriecher":
 anzeigenamen = {"medkit": "MedKit", "munitionskiste": "Munitionskiste(30 Schuss)", "panzerplatte": "Panzerplatte", "organ": "Organ",
     "vaporium": "Vaporium", "chitinpanzer": "Chitinpanzer", "saeuredruese": "Säuredrüse", "datenkern": "Datenkern", "reparaturkit": "Reparaturkit",
     "medic": "Medic", "heavy": "Heavy", "soldat": "Soldat", "engineer": "Engineer", "zielhilfe": "Zielhilfe", "grossmagazin": "Großmagazin", "schnellfeuer": "Schnellfeuer",
-    "panzerbrut": "Panzerbrut", "speier": "Speier", "kiecher": "Kriecher"}
+    "panzerbrut": "Panzerbrut", "speier": "Speier", "kriecher": "Kriecher"}
 
 stufenaufstieg = {"stufe1": 100, "stufe2": 300, "stufe3": 900, "stufe4": 3000, "stufe5": 10000}
 stufe = 0
@@ -137,7 +137,7 @@ sectors = {
 
 }
 
-aktueller_sektor = sectors["depot"]
+aktueller_sektor = "depot"
 
 
 #---------------------------------------------------------------------------------------------------------------------------
@@ -264,14 +264,11 @@ for wave in range(1, wave_to_evacuation + 1):
     spawnende_gegnertypen = []
     moegliche_gegnertypen = set()
 
-    if "grossmagazin" in freigeschaltet:
-        magazin_groesse = round(magazin_groesse * 1.5)    
-
 
 #SPAWN    
     if wave >= 1:
         moegliche_gegnertypen.add("kriecher")
-    if wave > 3 and wave < 8:
+    if wave > 3:
         moegliche_gegnertypen.add("speier")
     if wave > 7:
         moegliche_gegnertypen.add("panzerbrut")
@@ -317,12 +314,14 @@ for wave in range(1, wave_to_evacuation + 1):
 # DIE ANMARSCHBAHN
         anmarschbahn = ["."] * 10
         closest_enemy = min(gegner_pos)
+        i = gegner_pos.index(closest_enemy)
+        
         
         for anmarsch_pos in range(len(gegner_pos)):     
             if gegner_pos[anmarsch_pos] > 0:            
                 anmarschbahn[-gegner_pos[anmarsch_pos]] = GEGNERTYPEN[spawnende_gegnertypen[anmarsch_pos]]["zeichen"]
         
-        print("Das Loch @ " + "".join(pos_on_map) + " /-\ Vorposten")
+        print("Das Loch @ " + "".join(anmarschbahn) + " /-\ Vorposten")
 
 
 #AUSFÜHRBARE AKTIONEN       
@@ -341,30 +340,35 @@ for wave in range(1, wave_to_evacuation + 1):
                 if reload_necessary:
                     print("Magazin leer.")
                 else:                
-                    if "schnellfeuer" in freigeschaltet:
-                        gegner_pos.remove(closest_enemy)
+                    del gegner_pos[i]
+                    del spawnende_gegnertypen[i]
+                    if len(gegner_pos) > 0:
+                        closest_enemy = min(gegner_pos)
+                        i = gegner_pos.index(closest_enemy)                    
+                    geladen -= 1
+                    exp += 10
+                    loot.append(random.choice(loot_table))  
+                    round_nr += 1                    
+                    if geladen == 0:
+                        print("Das Magazin ist jetzt leer!")
+                        reload_necessary = True                        
+                    for move in range(len(gegner_pos)):
+                        gegner_pos[move] -= 1                    
+                                        
+                if "schnellfeuer" in freigeschaltet and len(gegner_pos) > 0:                       
+                    if reload_necessary:
+                        print("Magazin leer.")                        
+                    else:
+                        del spawnende_gegnertypen[i]
+                        del gegner_pos[i]
                         exp += 10
                         geladen -= 1
                         loot.append(random.choice(loot_table))
                         if geladen == 0:
                             print("Magazin ist jetzt leer!")
                             reload_necessary = True
-                if reload_necessary:
-                    print("Magazin leer.")
-                elif len(gegner_pos) > 0: #muss zwangsweise immer größer 0 sein ohne schnellfeuer
-                    gegner_pos.remove(closest_enemy)
-                    geladen -= 1
-                    exp += 10
-                    round_nr += 1
-                    loot.append(random.choice(loot_table))  
-                    if geladen == 0:
-                        print("Das Magazin ist jetzt leer!")
-                        reload_necessary = True                        
-                    for move in range(len(gegner_pos)):
-                        gegner_pos[move] -= 1
-
                 kern_integritaet -= len(gegner_pos) * 2
-                health -= len(gegner_pos) * 1        
+                health -= len(gegner_pos) * 1    
 
             elif word1 == "nachladen" or (word1 == "lade" and word2 == "nach") :
                 round_nr += 1
@@ -401,7 +405,7 @@ for wave in range(1, wave_to_evacuation + 1):
                     print("Nichts ausgewählt.")
                 else:
                     if word2 in loot:
-                        if stapelbar[word2] == False:
+                        if word2 not in stapelbar:
                             if len(inventory) >= max_inventory:
                                 print("Inventar ist voll.")
                             else:
@@ -427,10 +431,10 @@ for wave in range(1, wave_to_evacuation + 1):
                         print("Das besitze ich nicht.")
 
             elif word1 == "umsehen":
-                print(aktueller_sektor["beschreibung"])     #alles in einem Print?              
-                print(f"Nachbarsektoren: {aktueller_sektor['nachbarn']}")
+                print(sectors[aktueller_sektor]["beschreibung"])     #alles in einem Print?              
+                print(f"Nachbarsektoren: {sectors[aktueller_sektor]['nachbarn']}")
                 if "integritaet" in aktueller_sektor:
-                    print(f"Integritaet: {aktueller_sektor['integritaet']}")  
+                    print(f"Integritaet: {sectors[aktueller_sektor]['integritaet']}")  
                 else:
                     print(f"Integritaet: {kern_integritaet}")      
 
@@ -440,12 +444,12 @@ for wave in range(1, wave_to_evacuation + 1):
                 else:
                     if len(action) == 2 and word2 in sectors[aktueller_sektor]["nachbarn"]:
                         print(f"Ich gehe zum Sektor {word2}.")
-                        aktueller_sektor = sectors[word2] #vergeht eine Runde?
+                        aktueller_sektor = word2 #vergeht eine Runde?
                     else:
                         print("Diesen Sektor gibt es nicht.")
             
             elif word1 == "waren":
-                if aktueller_sektor != sectors["depot"]:
+                if aktueller_sektor != "depot":
                     print("Gehe zum Depot. Hier gibt es keine Waren.")
                 else:
                     for ware in waren:
@@ -453,7 +457,7 @@ for wave in range(1, wave_to_evacuation + 1):
                               #aufgabe 6 muss überarbeitet werden? Alle waren ohne Schleife angezeigt. Ware wird jetzt schon ohne Mehrarbeit ausgegeben?!?!?!?
             
             elif word1 == "kaufe":
-                if aktueller_sektor != sectors["depot"]:
+                if aktueller_sektor != "depot":
                     print("Gehe zum Depot. Hier kann man nichts kaufen.")
                 elif len(action) == 1:
                     print("Keine Ware ausgewählt. Gebe --waren ein, um die Waren zu sehen.")                    
@@ -461,11 +465,11 @@ for wave in range(1, wave_to_evacuation + 1):
                     print("Diese Ware ist nicht verfügbar.")
                 elif vorrat["vaporium"] < waren[word2]:
                     print("Du besitzt nicht genügend Vaporium.")
-                elif stapelbar[word2] == False and len(inventory) >= max_inventory:
+                elif word2 not in stapelbar and len(inventory) >= max_inventory:
                     print("Dein Inventar ist voll.")
                 else:
                     if len(action) == 2:                       
-                        if stapelbar[word2] == False:
+                        if word2 not in stapelbar:
                             inventory.append(word2)
                             vorrat["vaporium"] -= waren[word2]
                             print(f"{anzeigenamen.get(word2, word2)} erfolgreich gekauft.")   
@@ -481,7 +485,7 @@ for wave in range(1, wave_to_evacuation + 1):
                                 print(f"{anzahl} {anzeigenamen.get(word2, word2)} erfolgreich gekauft.")                
             
             elif len(action) == 1 and word1 == "verkaufe":
-                if aktueller_sektor != sectors["depot"]:
+                if aktueller_sektor != "depot":
                     print("Gehe zum Depot. Hier kann man nichts verkaufen.")
                 else:  
                     bezahlung = 0             
@@ -495,8 +499,6 @@ for wave in range(1, wave_to_evacuation + 1):
                     print(f"Du besitzt jetzt {vorrat['vaporium']} Vaporium.") 
 
             elif word1 == "upgrades":
-                if aktueller_sektor != sectors["depot"]:
-                    print("Gehe zum Depot. Hier gibt es keine Upgrades.")
                 for verbesserung in UPGRADES:
                     if verbesserung not in freigeschaltet:
                         print(f"{anzeigenamen.get(verbesserung, verbesserung)}: {UPGRADES[verbesserung]} Vaporium")
@@ -504,7 +506,7 @@ for wave in range(1, wave_to_evacuation + 1):
                         print(f"{anzeigenamen.get(verbesserung, verbesserung)}: bereits erworben.") 
 
             elif word1 == "upgrade":   
-                if aktueller_sektor != sectors["depot"]:
+                if aktueller_sektor != "depot":
                     print("Gehe zum Depot. Hier kann man nichts kaufen.")
                 elif len(action) == 1:
                     print("Kein Upgrade ausgewählt. Gebe --upgrades ein, um die Upgrades zu sehen.")                    
@@ -517,7 +519,9 @@ for wave in range(1, wave_to_evacuation + 1):
                 else:
                     vorrat["vaporium"] -= UPGRADES[word2]
                     freigeschaltet.add(word2)
-                    print(f"{word2} erworben.")                    
+                    print(f"{word2} erworben.")    
+                    if "grossmagazin" in freigeschaltet:
+                        magazin_groesse = round(magazin_groesse * 1.5)                  
                         
             elif word1 == "map":
                 print(karte)
