@@ -1,0 +1,193 @@
+Health: 100 | Ammo: 40 | Vaporium: 100 | Rekruten: 0 | Wellen bis zur Evakuierung: 20 
+
+
+Rekrut, welches spezialisierte Training haben Sie durchlaufen?
+Soldat
+Heavy
+Engineer
+Medic
+Wähle eine Klasse und gebe den Namen ein:  
+Klasse: soldat
+Health: 100
+Damage: 10
+Armor: 5
+
+
+Wir haben nur noch 40 Munition übrig.
+Die Kernintegrität unserer Einrichtung beträgt zwar noch 100%,
+aber uns verbleiben nur noch 100 Vaporium.
+
+Aufgezeichnete Durchsage: Kzzz... Brauchen dringend Verstärkung! kschhh... Wir werden überrannt! Kzzz... Beeilt euch! ...chhh
+
+
+
+
+                                VORPOSTEN              
+  /------------------------------------------------------------------\ 
+ / *  *  *  *  *  *  *  *  *  *  * --- *  *  *  *  *  *  *  *  *  *  *\ 
+/                                 |   |                                \ 
+
+DER KRIECHER: 
+Der Kriecher wurde vom der Brut zu einer perfektionierten Tötungsmaschine mutiert. Von der Größe eines großen Hundes, 
+greift er mit messerscharfen Sensenklauen und kraftvollen Beißwerkzeugen an. Ihre wahre Stärke liegt in ihrer Masse und 
+ihrer enormen Fortbewegungsgeschwindigkeit. Einzeln sind sie leicht zu eliminieren, doch im Kollektiv fluten sie die Schlachtfelder, 
+umgehen Verteidigungslinien und überrennen selbst stark befestigte Stellungen in Sekundenschnelle durch ihre schiere Überzahl.
+--- Welle 1 von 20 ---
+
+1 Gegner befinden sich im Anmarsch.
+
+Welle 1 | Runde 1
+Das Loch @ K......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Der Kriecher tritt fast ausschließlich in riesigen Schwärmen auf, um den Feind blitzschnell zu überrennen.
+--- Welle 2 von 20 ---
+
+2 Gegner befinden sich im Anmarsch.
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Kern: 100
+Health: 100
+Armor: 5
+Vaporium: 100
+Ammo: 40
+Schaden: 10
+Rekruten: 0
+Gegner: [10, 10]
+Erfahrung: 10
+Stufe: 0
+Nachladen nötig: False
+Loot:['saeuredruese']
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Zielhilfe: 60 Vaporium
+Großmagazin: 80 Vaporium
+Schnellfeuer: 120 Vaporium
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Hier kann man Gegenstände kaufen.
+Nachbarsektoren: {'osten': 'kern'}
+Integritaet: 100
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+DER KRIECHER: 
+Der Kriecher wurde vom der Brut zu einer perfektionierten Tötungsmaschine mutiert. Von der Größe eines großen Hundes, 
+greift er mit messerscharfen Sensenklauen und kraftvollen Beißwerkzeugen an. Ihre wahre Stärke liegt in ihrer Masse und 
+ihrer enormen Fortbewegungsgeschwindigkeit. Einzeln sind sie leicht zu eliminieren, doch im Kollektiv fluten sie die Schlachtfelder, 
+umgehen Verteidigungslinien und überrennen selbst stark befestigte Stellungen in Sekundenschnelle durch ihre schiere Überzahl.
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+grossmagazin erworben.
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Diese Ware ist nicht verfügbar.
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Wieviele möchtest du kaufen? 1 Munitionskiste(30 Schuss) erfolgreich gekauft.
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Kern: 100
+Health: 100
+Armor: 5
+Vaporium: 5
+Ammo: 70
+Schaden: 10
+Rekruten: 0
+Gegner: [10, 10]
+Erfahrung: 10
+Stufe: 0
+Nachladen nötig: False
+Loot:['saeuredruese']
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+MedKit: 25 Vaporium
+Munitionskiste(30 Schuss): 15 Vaporium
+Panzerplatte: 90 Vaporium
+Reparaturkit: 60 Vaporium
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Du besitzt nicht genügend Vaporium.
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Zielhilfe: 60 Vaporium
+Großmagazin: bereits erworben.
+Schnellfeuer: 120 Vaporium
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Du besitzt nicht genügend Vaporium.
+
+Welle 2 | Runde 1
+Das Loch @ S......... /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Nachgeladen.
+
+Welle 2 | Runde 2
+Das Loch @ .S........ /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Diesen Sektor gibt es nicht.
+
+Welle 2 | Runde 2
+Das Loch @ .S........ /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--
+Diesen Sektor gibt es nicht.
+
+Welle 2 | Runde 2
+Das Loch @ .S........ /-\ Vorposten
+Wähle eine der Aktionen:
+--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium
+--

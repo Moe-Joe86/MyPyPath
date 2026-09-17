@@ -1,0 +1,18 @@
+soldat
+feuer
+status
+upgrades
+umsehen
+bestiarium kriecher
+upgrade grossmagazin
+kaufe munitionskasten
+kaufe munitionskiste
+1
+status
+waren
+kaufe panzerplatte
+upgrades
+upgrade schnellfeuer
+nachladen
+gehe kern
+gehe osttor
