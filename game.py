@@ -140,6 +140,368 @@ sectors = {
 aktueller_sektor = "depot"
 
 
+#---------------------------------------------------------------------------------------------------------
+#FUNKTIONEN AUSGABE
+def empty_magazine_msg():
+    print("Das Magazin ist leer.")   
+
+def no_more_ammo_msg():
+    print("Wir haben keine Munition mehr.")
+
+def reloaded_msg():
+    print("Nachgeladen.")
+
+def not_depot_msg():
+    print("Gehe zum Depot. Hier gibt es keine Waren.")
+
+def sector_not_exist():
+    print("Diesen Sektor gibt es nicht.")  
+
+def keine_ware_gewählt_msg():
+    print("Keine Ware ausgewählt. Gebe --waren ein, um die Waren zu sehen.") 
+
+def ware_nicht_verfügbar_msg():
+    print("Diese Ware ist nicht verfügbar.")
+
+def kein_vaporium_msg():
+    print("Du besitzt nicht genügend Vaporium.")
+
+def inventar_voll_msg():
+    print("Dein Inventar ist voll.")
+
+def ungueltige_eingabe_msg():
+    print("Ungültige Eingabe.")
+
+def gekauft_stapelbar_msg(anzahl, anzeigenamen, word2):
+    print(f"{anzahl} {anzeigenamen.get(word2, word2)} erfolgreich gekauft.")
+
+def kauf_menge_msg():
+    print(f"Wieviele möchtest du kaufen?")
+
+def gekauft_msg(anzeigenamen, word2):
+    print(f"{anzeigenamen.get(word2, word2)} erfolgreich gekauft.")  
+
+def upgrades_anzeigen_msg(freigeschaltet, anzeigenamen):
+    for verbesserung in UPGRADES:
+        if verbesserung not in freigeschaltet:
+            print(f"{anzeigenamen.get(verbesserung, verbesserung)}: {UPGRADES[verbesserung]} Vaporium")
+        else:
+            print(f"{anzeigenamen.get(verbesserung, verbesserung)}: bereits erworben.") 
+
+def nehmen_msg(anzeigenamen, word2):
+    print(f"{anzeigenamen.get(word2, word2)} aufgenommen.")
+
+def ablegen_msg(anzeigenamen, word2):
+    print(f"{anzeigenamen.get(word2, word2)} abgelegt.")
+
+def liegt_nicht():
+    print("Das liegt hier nicht.") 
+
+def umsehen_msg(aktueller_sektor, sectors, kern_integritaet):
+    print(sectors[aktueller_sektor]["beschreibung"])               
+    print(f"Nachbarsektoren: {sectors[aktueller_sektor]['nachbarn']}")
+    if "integritaet" in aktueller_sektor:
+        print(f"Integritaet: {sectors[aktueller_sektor]['integritaet']}")  
+    else:
+        print(f"Integritaet: {kern_integritaet}")
+
+
+
+def besitze_nicht():
+    print("Das besitze ich nicht.")
+
+def nichts_ausgewaehlt():
+    print("Nichts ausgewählt.")
+
+def upgrade_erworben(word2):
+    print(f"{word2} erworben.")   
+
+def verkauft_msg(vorrat, anzeigenamen, verkaufswerte):
+    print(f"{vorrat[verkauft]} {anzeigenamen.get(verkauft, verkauft)} für {(vorrat[verkauft] * verkaufswerte[verkauft])} Vaporium verkauft.")
+
+def verkauft_abschluss_msg(bezahlung, vorrat):
+    print()
+    print(f"Du hast insgesamt {bezahlung} Vaporium erhalten.")
+    print(f"Du besitzt jetzt {vorrat['vaporium']} Vaporium.")
+
+def keine_richtung_msg():
+    print("Keine Richtung ausgewählt. Nutze --umsehen, um Richtungen zu sehen.")
+
+def inventar_msg(inventory, vorrat, anzeigenamen):
+    print("Gegenstände und Vorrat:")
+    for gegenstand in inventory:
+        print(f"- {anzeigenamen.get(gegenstand, gegenstand)}")
+    for gegenstand in vorrat:
+        print(f"- {vorrat[gegenstand]} {anzeigenamen.get(gegenstand, gegenstand)}")
+
+
+
+#-----------------------
+
+def schaden_an_gegner(gegner_pos, spawnende_gegnertypen):
+    del gegner_pos[i]
+    del spawnende_gegnertypen[i]
+
+def schaden_an_base():
+    print()
+
+
+#FUNKTIONEN RECHNUNGEN/ENTSCHEIDUNGEN
+def feuern():
+    if reload_necessary:
+        empty_magazine()
+    else:                
+        schaden_an_gegner()
+    if len(gegner_pos) > 0:
+        closest_enemy = min(gegner_pos)
+        i = gegner_pos.index(closest_enemy)                    
+    geladen -= 1
+    exp += 10
+    loot.append(random.choice(loot_table))  
+    round_nr += 1                    
+    if geladen == 0:
+        empty_magazine()
+        reload_necessary = True                        
+    for move in range(len(gegner_pos)):
+        gegner_pos[move] -= 1                    
+                                    
+    if "schnellfeuer" in freigeschaltet and len(gegner_pos) > 0:                       
+        if reload_necessary:
+            empty_magazine()                      
+        else:
+            schaden_an_gegner(gegner_pos, spawnende_gegnertypen)
+            exp += 10
+            geladen -= 1
+            loot.append(random.choice(loot_table))
+            if geladen == 0:
+                empty_magazine()
+                reload_necessary = True
+    kern_integritaet -= len(gegner_pos) * 2
+    health -= len(gegner_pos) * 1    
+
+def zeige_status(kern_integritaet, vorrat, health, stufe, gegner_pos, freigeschaltet):
+    """
+    kern_balken = round((kern_integritaet / core_max) * balken_laenge)      #Meine Balkenanzeigen rechnen alle Werte auf die Balkenlänge 10 um und übschreiten keine Grenzen.
+    ammo_balken = round((vorrat['munition']  / ammo_max) * balken_laenge)
+    health_balken = round((health / health_max) * balken_laenge)
+    kern_rest = balken_laenge - kern_balken
+    ammo_rest = balken_laenge - ammo_balken
+    health_rest = balken_laenge - health_balken
+    """
+    print(f"Kern: {kern_integritaet}")
+    print(f"Health: {health}")
+    print(f"Ammo: {vorrat['munition']}")
+    print(f"Gegner: {gegner_pos}")
+    print(f"Stufe: {stufe}")
+    print(f"Upgrades:{freigeschaltet}")
+    
+    """
+    print("Kern      [" + ("#" * kern_balken) + ("·" * kern_rest) + "]")
+    print("Health    [" + ("#" * health_balken) + ("·" * health_rest) + "]")
+    print("Munition  [" + ("#" * ammo_balken) + ("·" * ammo_rest) + "]")"""
+
+
+def nachladen(round_nr, reloaded, vorrat, geladen, reload_necessary, kern_integritaet):
+    round_nr += 1
+    reloaded = False
+    while vorrat["munition"] > 0 and geladen < magazin_groesse:
+        vorrat["munition"] -= 1
+        geladen += 1
+        reloaded = True
+        reload_necessary = False
+    if vorrat["munition"] == 0:
+        no_more_ammo()        
+    elif reloaded == True:
+        reloaded_msg()
+
+    kern_integritaet -= len(gegner_pos) * 2
+    reload_necessary = False                  
+    for move in range(len(gegner_pos)):
+        gegner_pos[move] -= 1
+
+def einkaufen(aktueller_sektor, vorrat, stapelbar, inventory):
+    if aktueller_sektor != "depot":
+        not_depot_msg()
+    elif len(action) == 1:
+        keine_ware_gewählt_msg()                           
+    elif word2 not in waren:
+        ware_nicht_verfügbar_msg()
+    elif vorrat["vaporium"] < waren[word2]:
+        kein_vaporium_msg()
+    elif word2 not in stapelbar and len(inventory) >= max_inventory:
+        inventar_voll_msg()
+    else:
+        if len(action) == 2:                       
+            if word2 not in stapelbar:
+                inventory.append(word2)
+                vorrat["vaporium"] -= waren[word2]
+                gekauft_msg(anzeigenamen, word2) 
+            else:
+                anzahl = int(input())
+                if anzahl < 1:
+                    ungueltige_eingabe_msg()           
+                if vorrat["vaporium"] < (waren[word2] * anzahl):
+                    kein_vaporium_msg()
+                else:                                                       # aktuell NUR MUNITION ALS STAPELBAR!!!!!
+                    vorrat["munition"] += (munitionskiste * anzahl)
+                    vorrat["vaporium"] -= (waren[word2] * anzahl)
+                    gekauft_stapelbar_msg(anzahl, anzeigenamen, word2)
+
+
+def verkaufen(aktueller_sektor, verkaufswerte, vorrat, anzeigenamen):
+    if aktueller_sektor != "depot":
+        not_depot_msg()
+    else:  
+        bezahlung = 0             
+        for verkauft in verkaufswerte:
+            verkauft_msg(vorrat, anzeigenamen, verkaufswerte)
+            bezahlung += (vorrat[verkauft] * verkaufswerte[verkauft])
+            vorrat[verkauft] = 0                        
+        vorrat["vaporium"] += bezahlung  
+        return vorrat["vaporium"]
+        verkauft_abschluss_msg(bezahlung, vorrat)  
+
+
+def upgraden(vorrat, freigeschaltet):
+    if aktueller_sektor != "depot":
+        not_depot_msg()
+    elif len(action) == 1 or word2 not in UPGRADES or word2 in freigeschaltet:
+        ungueltige_eingabe_msg()                 
+    elif vorrat["vaporium"] < UPGRADES[word2]:
+        kein_vaporium_msg()
+    else:      
+        vorrat["vaporium"] -= UPGRADES[word2]    
+        freigeschaltet.add(word2)
+        upgrade_erworben()
+        if "grossmagazin" in freigeschaltet:
+            magazin_groesse = round(magazin_groesse * 1.5)   
+            return magazin_groesse
+
+def wechsel_sektor(sectors, aktueller_sektor, word2):
+    if len(action) == 1:
+        keine_richtung_msg()
+
+    else:
+        if len(action) == 2 and word2 in sectors[aktueller_sektor]["nachbarn"]:
+            print(f"Ich gehe zum Sektor {word2}.")
+            aktueller_sektor = word2 #vergeht eine Runde?
+            return aktueller_sektor
+        else:
+            sector_not_exist()
+
+
+def nehmen(loot, inventory, vorrat, word2):
+    if len(action) == 1:
+        ungueltige_eingabe_msg()
+    else:
+        if word2 in loot:
+            if word2 not in stapelbar:
+                if len(inventory) >= max_inventory:
+                    inventar_voll_msg()
+                else:
+                    inventory.append(word2)
+                    loot.remove(word2)
+                    nehmen_msg(anzeigenamen, word2)
+            else:
+                vorrat[word2] += 1
+                loot.remove(word2)
+                nehmen_msg(anzeigenamen, word2)
+        else:
+            liegt_nicht()
+
+def waren():                                                     #kein Logik, nur ausgabe
+    if aktueller_sektor != "depot":
+        print("Gehe zum Depot. Hier gibt es keine Waren.")
+    else:
+        for ware in waren:
+            print(f"{anzeigenamen.get(ware, ware)}: {waren[ware]} Vaporium")
+            print()
+            print(f"Du besitzt {vorrat["vaporium"]}.")
+                    #aufgabe 6 muss überarbeitet werden? Alle waren ohne Schleife angezeigt. Ware wird jetzt schon ohne Mehrarbeit ausgegeben?!?!?!?
+
+def ablegen(inventory, loot, word2):
+    if len(action) == 1:
+        nichts_ausgewaehlt()
+    else:
+        if len(action) == 2 and word2 in inventory:
+            inventory.remove(word2)
+            loot.append(word2)
+            ablegen_msg(anzeigenamen, word2)
+        else:
+            besitze_nicht()
+
+def bestiarium():                                                #kein Logik, nur ausgabe
+    if len(word2) == 0:
+        for gegnerauflistung in bekannte_gegnertypen:
+            print(f"{anzeigenamen.get(gegnerauflistung, gegnerauflistung)}: {GEGNERTYPEN[gegnerauflistung]["kurz"]}")
+        print(f"Du hast {len(bekannte_gegnertypen)} von {len(GEGNERTYPEN)} entdeckt.")
+    else:
+        if word2 not in GEGNERTYPEN:
+            print("Diesen Gegner gibt es nicht.")
+        elif word2 not in bekannte_gegnertypen and word2 in GEGNERTYPEN:
+            print("Zu diesem Gegner konnten unsere Marines noch keine Informationen sammeln.")
+        elif word2 in bekannte_gegnertypen and word2 in GEGNERTYPEN:
+            print(GEGNERTYPEN[word2]["lang"])  
+
+def verarbeite_befehl():
+    action = input("--")
+    action = action.lower().split()
+    if len(action) == 0:
+        ungueltige_eingabe_msg()
+
+    else:
+        word1 = action[0]
+        word2 = ""
+        if len(action) > 1:
+            word2 = action[1]
+
+
+        if word1 == "feuer" or word1 == "feuern":
+            feuern()
+
+        elif word1 == "nachladen":
+            nachladen()
+
+        elif word1 == "inventar":
+            inventar_msg(inventory, vorrat, anzeigenamen)
+
+        elif word1 == "nimm":
+            nehmen(loot, inventory, vorrat, word2)
+        
+        elif word1 == "lege":
+            ablegen(inventory, loot, word2)
+
+        elif word1 == "umsehen":
+            umsehen_msg(aktueller_sektor, sectors, kern_integritaet)   
+
+        elif word1 == "gehe":
+            wechsel_sektor(sectors, aktueller_sektor, word2)
+        
+        elif word1 == "waren":
+            waren()
+        
+        elif word1 == "kaufe":
+            einkaufen(aktueller_sektor, vorrat, stapelbar, inventory)              
+        
+        elif word1 == "verkaufe" or word1 == "verkaufen":
+            verkaufen(aktueller_sektor, verkaufswerte, vorrat, anzeigenamen)
+
+        elif word1 == "upgrades":
+            upgrades_anzeigen_msg(freigeschaltet, anzeigenamen)
+
+        elif word1 == "upgrade":   
+            upgraden()
+                    
+        elif word1 == "map":
+            print(karte)
+        
+        elif word1 == "bestiarium":
+            bestiarium()
+                            
+        elif word1 == "status":
+            zeige_status()
+
+
 #---------------------------------------------------------------------------------------------------------------------------
 
 ascii_kopf = """
@@ -315,259 +677,19 @@ for wave in range(1, wave_to_evacuation + 1):
         anmarschbahn = ["."] * 10
         closest_enemy = min(gegner_pos)
         i = gegner_pos.index(closest_enemy)
-        
-        
         for anmarsch_pos in range(len(gegner_pos)):     
             if gegner_pos[anmarsch_pos] > 0:            
                 anmarschbahn[-gegner_pos[anmarsch_pos]] = GEGNERTYPEN[spawnende_gegnertypen[anmarsch_pos]]["zeichen"]
         
         print("Das Loch @ " + "".join(anmarschbahn) + " /-\ Vorposten")
 
-
-#AUSFÜHRBARE AKTIONEN       
+#EINE AKTION!
+# --------------      
         print("Wähle eine der Aktionen:\n--beenden --feuer --status --nachladen --inventar --umsehen --gehe --waren --kaufe x --verkaufe --upgrades --upgrade x --map --bestiarium")
-        action = input("--").lower().split()   #test,schaden sind entwicklerwerkzeuge
+
         print()
-
-        if len(action) == 0:
-            print("Gib etwas ein")
-        else:
-            word1 = action[0]
-            word2 = ""
-            if len(action) > 1:
-                word2 = action[1]
-            if word1 == "feuer" or word1 == "feuern":
-                if reload_necessary:
-                    print("Magazin leer.")
-                else:                
-                    del gegner_pos[i]
-                    del spawnende_gegnertypen[i]
-                    if len(gegner_pos) > 0:
-                        closest_enemy = min(gegner_pos)
-                        i = gegner_pos.index(closest_enemy)                    
-                    geladen -= 1
-                    exp += 10
-                    loot.append(random.choice(loot_table))  
-                    round_nr += 1                    
-                    if geladen == 0:
-                        print("Das Magazin ist jetzt leer!")
-                        reload_necessary = True                        
-                    for move in range(len(gegner_pos)):
-                        gegner_pos[move] -= 1                    
-                                        
-                if "schnellfeuer" in freigeschaltet and len(gegner_pos) > 0:                       
-                    if reload_necessary:
-                        print("Magazin leer.")                        
-                    else:
-                        del spawnende_gegnertypen[i]
-                        del gegner_pos[i]
-                        exp += 10
-                        geladen -= 1
-                        loot.append(random.choice(loot_table))
-                        if geladen == 0:
-                            print("Magazin ist jetzt leer!")
-                            reload_necessary = True
-                kern_integritaet -= len(gegner_pos) * 2
-                health -= len(gegner_pos) * 1    
-
-            elif word1 == "nachladen" or (word1 == "lade" and word2 == "nach") :
-                round_nr += 1
-                reloaded = False
-                while vorrat["munition"] > 0 and geladen < magazin_groesse:
-                    vorrat["munition"] -= 1
-                    geladen += 1
-                    reloaded = True
-                    reload_necessary = False
-                if vorrat["munition"] == 0:
-                    print("Munitionsmangel.")
-                elif reloaded == True:
-                    print("Nachgeladen.")
-
-
-                kern_integritaet -= len(gegner_pos) * 2
-                reload_necessary = False                  
-                for move in range(len(gegner_pos)):
-                    gegner_pos[move] -= 1
-
-            elif word1 == "beenden" or (word1 == "welle" and word2 == "beenden"):
-                print(f"Welle {wave} beendet")
-                break
-
-            elif word1 == "inventar" or (word1 == "inventar" and word2 == "anzeigen"):
-                print("Gegenstände und Vorrat:")
-                for gegenstand in inventory:
-                    print(f"- {anzeigenamen.get(gegenstand, gegenstand)}")
-                for gegenstand in vorrat:
-                    print(f"- {vorrat[gegenstand]} {anzeigenamen.get(gegenstand, gegenstand)}")
-
-            elif word1 == "nimm":
-                if len(action) == 1:
-                    print("Nichts ausgewählt.")
-                else:
-                    if word2 in loot:
-                        if word2 not in stapelbar:
-                            if len(inventory) >= max_inventory:
-                                print("Inventar ist voll.")
-                            else:
-                                inventory.append(word2)
-                                loot.remove(word2)
-                                print(f"{anzeigenamen.get(word2, word2)} aufgenommen.")
-                        else:
-                            vorrat[word2] += 1
-                            loot.remove(word2)
-                            print(f"{anzeigenamen.get(word2, word2)} aufgenommen.")
-                    else:
-                        print("Das liegt hier nicht.")
-            
-            elif word1 == "lege":
-                if len(action) == 1:
-                    print("Nichts ausgewählt.")
-                else:
-                    if len(action) == 2 and word2 in inventory:
-                        inventory.remove(word2)
-                        loot.append(word2)
-                        print(f"{anzeigenamen.get(word2, word2)} abgelegt.")
-                    else:
-                        print("Das besitze ich nicht.")
-
-            elif word1 == "umsehen":
-                print(sectors[aktueller_sektor]["beschreibung"])     #alles in einem Print?              
-                print(f"Nachbarsektoren: {sectors[aktueller_sektor]['nachbarn']}")
-                if "integritaet" in aktueller_sektor:
-                    print(f"Integritaet: {sectors[aktueller_sektor]['integritaet']}")  
-                else:
-                    print(f"Integritaet: {kern_integritaet}")      
-
-            elif word1 == "gehe":
-                if len(action) == 1:
-                    print("Keine Richtung ausgewählt. Nutze --umsehen, um Richtungen zu sehen.")
-                else:
-                    if len(action) == 2 and word2 in sectors[aktueller_sektor]["nachbarn"]:
-                        print(f"Ich gehe zum Sektor {word2}.")
-                        aktueller_sektor = word2 #vergeht eine Runde?
-                    else:
-                        print("Diesen Sektor gibt es nicht.")
-            
-            elif word1 == "waren":
-                if aktueller_sektor != "depot":
-                    print("Gehe zum Depot. Hier gibt es keine Waren.")
-                else:
-                    for ware in waren:
-                        print(f"{anzeigenamen.get(ware, ware)}: {waren[ware]} Vaporium")
-                              #aufgabe 6 muss überarbeitet werden? Alle waren ohne Schleife angezeigt. Ware wird jetzt schon ohne Mehrarbeit ausgegeben?!?!?!?
-            
-            elif word1 == "kaufe":
-                if aktueller_sektor != "depot":
-                    print("Gehe zum Depot. Hier kann man nichts kaufen.")
-                elif len(action) == 1:
-                    print("Keine Ware ausgewählt. Gebe --waren ein, um die Waren zu sehen.")                    
-                elif word2 not in waren:
-                    print("Diese Ware ist nicht verfügbar.")
-                elif vorrat["vaporium"] < waren[word2]:
-                    print("Du besitzt nicht genügend Vaporium.")
-                elif word2 not in stapelbar and len(inventory) >= max_inventory:
-                    print("Dein Inventar ist voll.")
-                else:
-                    if len(action) == 2:                       
-                        if word2 not in stapelbar:
-                            inventory.append(word2)
-                            vorrat["vaporium"] -= waren[word2]
-                            print(f"{anzeigenamen.get(word2, word2)} erfolgreich gekauft.")   
-                        else:
-                            anzahl = int(input(f"Wieviele möchtest du kaufen? "))
-                            if anzahl < 1:
-                                print("Ungültige Eingabe.")
-                            if vorrat["vaporium"] < (waren[word2] * anzahl):
-                                print("Du besitzt nicht genügend Vaporium.")
-                            else:                                                       # aktuell NUR MUNITION ALS STAPELBAR!!!!!
-                                vorrat["munition"] += (munitionskiste * anzahl)
-                                vorrat["vaporium"] -= (waren[word2] * anzahl)
-                                print(f"{anzahl} {anzeigenamen.get(word2, word2)} erfolgreich gekauft.")                
-            
-            elif len(action) == 1 and word1 == "verkaufe":
-                if aktueller_sektor != "depot":
-                    print("Gehe zum Depot. Hier kann man nichts verkaufen.")
-                else:  
-                    bezahlung = 0             
-                    for verkauft in verkaufswerte:
-                        print(f"{vorrat[verkauft]} {anzeigenamen.get(verkauft, verkauft)} für {(vorrat[verkauft] * verkaufswerte[verkauft])} Vaporium verkauft.")
-                        bezahlung += (vorrat[verkauft] * verkaufswerte[verkauft])
-                        vorrat[verkauft] = 0                        
-                    vorrat["vaporium"] += bezahlung    
-                    print()
-                    print(f"Du hast insgesamt {bezahlung} Vaporium erhalten.")
-                    print(f"Du besitzt jetzt {vorrat['vaporium']} Vaporium.") 
-
-            elif word1 == "upgrades":
-                for verbesserung in UPGRADES:
-                    if verbesserung not in freigeschaltet:
-                        print(f"{anzeigenamen.get(verbesserung, verbesserung)}: {UPGRADES[verbesserung]} Vaporium")
-                    else:
-                        print(f"{anzeigenamen.get(verbesserung, verbesserung)}: bereits erworben.") 
-
-            elif word1 == "upgrade":   
-                if aktueller_sektor != "depot":
-                    print("Gehe zum Depot. Hier kann man nichts kaufen.")
-                elif len(action) == 1:
-                    print("Kein Upgrade ausgewählt. Gebe --upgrades ein, um die Upgrades zu sehen.")                    
-                elif word2 not in UPGRADES:
-                    print("Dieses Upgrade ist nicht verfügbar.")
-                elif vorrat["vaporium"] < UPGRADES[word2]:
-                    print("Du besitzt nicht genügend Vaporium.")
-                elif word2 in freigeschaltet:
-                    print("Bereits erworben.")
-                else:
-                    vorrat["vaporium"] -= UPGRADES[word2]
-                    freigeschaltet.add(word2)
-                    print(f"{word2} erworben.")    
-                    if "grossmagazin" in freigeschaltet:
-                        magazin_groesse = round(magazin_groesse * 1.5)                  
-                        
-            elif word1 == "map":
-                print(karte)
-            
-            elif word1 == "bestiarium" and len(word2) == 0:
-                for gegnerauflistung in bekannte_gegnertypen:
-                    print(f"{anzeigenamen.get(gegnerauflistung, gegnerauflistung)}: {GEGNERTYPEN[gegnerauflistung]["kurz"]}")
-                print(f"Du hast {len(bekannte_gegnertypen)} von {len(GEGNERTYPEN)} entdeckt.")
-
-            elif word1 == "bestiarium" and len(word2) > 0:
-                if word2 not in GEGNERTYPEN:
-                    print("Diesen Gegner gibt es nicht.")
-                elif word2 not in bekannte_gegnertypen and word2 in GEGNERTYPEN:
-                    print("Zu diesem Gegner konnten unsere Marines noch keine Informationen sammeln.")
-                elif word2 in bekannte_gegnertypen and word2 in GEGNERTYPEN:
-                    print(GEGNERTYPEN[word2]["lang"])
-                                
-
-            elif word1 == "status" or (word1 == "status" and  word2 == "anzeigen"):
-                """
-                kern_balken = round((kern_integritaet / core_max) * balken_laenge)      #Meine Balkenanzeigen rechnen alle Werte auf die Balkenlänge 10 um und übschreiten keine Grenzen.
-                ammo_balken = round((vorrat['munition']  / ammo_max) * balken_laenge)
-                health_balken = round((health / health_max) * balken_laenge)
-                kern_rest = balken_laenge - kern_balken
-                ammo_rest = balken_laenge - ammo_balken
-                health_rest = balken_laenge - health_balken
-                """
-                print(f"Kern: {kern_integritaet}")
-                print(f"Health: {health}")
-                print(f"Armor: {armor}")
-                print(f"Vaporium: {vorrat['vaporium']}")
-                print(f"Ammo: {vorrat['munition']}")
-                print(f"Schaden: {damage}")
-                print(f"Rekruten: {recruts}")
-                print(f"Gegner: {gegner_pos}")
-                print(f"Erfahrung: {exp}")
-                print(f"Stufe: {stufe}")
-                print(f"Nachladen nötig: {reload_necessary}")
-                print(f"Loot:{loot}")
-                
-                """
-                print("Kern      [" + ("#" * kern_balken) + ("·" * kern_rest) + "]")
-                print("Health    [" + ("#" * health_balken) + ("·" * health_rest) + "]")
-                print("Munition  [" + ("#" * ammo_balken) + ("·" * ammo_rest) + "]")"""
-    
-
+        verarbeite_befehl()  
+#---------------
 
     if kern_integritaet <= 0:        
         print("Deine Basis wurde zerstört.")
